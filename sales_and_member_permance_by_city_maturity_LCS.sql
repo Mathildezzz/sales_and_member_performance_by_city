@@ -4,7 +4,7 @@ insert into tutorial.mz_member_performance_by_city_maturity
 
 ------------------------------------- TTL sales ----------------
 WITH ttl_sales_TY AS (
-SELECT CASE WHEN city_maturity_type IS NULL THEN '4_unspecified' ELSE city_maturity_type END AS city_maturity_type,
+SELECT CASE WHEN ps.city_maturity_type IS NULL THEN '4_unspecified' ELSE ps.city_maturity_type END AS city_maturity_type,
        SUM(transactions) AS transactions, SUM(traffic_amt) AS traffic, SUM(gmv_rsp) - SUM(return_gmv_rsp) AS sales_rrp
 FROM dm_view.offline_lcs_cs__fnl sales
     LEFT JOIN (
@@ -27,7 +27,7 @@ WHERE 1 = 1
   ),
   
 ttl_sales_LY AS (
-SELECT CASE WHEN city_maturity_type IS NULL THEN '4_unspecified' ELSE city_maturity_type END AS city_maturity_type,
+SELECT CASE WHEN ps.city_maturity_type IS NULL THEN '4_unspecified' ELSE ps.city_maturity_type END AS city_maturity_type,
        SUM(transactions) AS transactions, SUM(traffic_amt) AS traffic, SUM(gmv_rsp) - SUM(return_gmv_rsp) AS sales_rrp
 FROM dm_view.offline_lcs_cs__fnl sales
 LEFT JOIN (
@@ -113,7 +113,7 @@ new_member_TY_YTD AS (
        AND crm_member_id IS NOT NULL   -- member sales
        GROUP BY 1
     UNION ALL
-    SELECT 'TTL' city_maturity_type,
+    SELECT 'TTL' AS city_maturity_type,
             
          CAST((sum(case when crm_member_id IS NOT NULL AND sales_qty > 0 then order_rrp_amt else 0 end) - sum(case when crm_member_id IS NOT NULL AND sales_qty < 0 then abs(order_rrp_amt) else 0 end)) AS FLOAT)/ COUNT(DISTINCT CASE WHEN if_eff_order_tag IS TRUE AND crm_member_id IS NOT NULL THEN original_order_id ELSE NULL END) AS member_atv,
          CAST(COUNT(DISTINCT CASE WHEN if_eff_order_tag IS TRUE AND crm_member_id IS NOT NULL THEN original_order_id ELSE NULL END) AS FLOAT)/ COUNT(DISTINCT CASE WHEN  if_eff_order_tag IS TRUE AND crm_member_id IS NOT NULL THEN trans.crm_member_id ELSE NULL END) AS member_frequency,
@@ -270,5 +270,3 @@ SELECT
   FROM sales
   LEFT JOIN member_KPI
          ON member_KPI.city_maturity_type = sales.city_maturity_type;
- 
- 
