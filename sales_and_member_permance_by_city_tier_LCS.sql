@@ -48,11 +48,11 @@ SELECT ttl_sales_TY.city_tier,
        ttl_sales_TY.traffic,
        ttl_sales_TY.sales_rrp,
        ttl_sales_TY.transactions,
-       CAST(ttl_sales_TY.sales_rrp AS FLOAT)/ttl_sales_TY.transactions                AS atv,
-       CAST(ttl_sales_TY.traffic AS FLOAT)/ttl_sales_LY.traffic - 1                   AS traffic_vs_LY,
-       CAST(ttl_sales_TY.sales_rrp AS FLOAT)/ttl_sales_LY.sales_rrp - 1               AS sales_vs_LY,
-       CAST(ttl_sales_TY.transactions AS FLOAT)/ttl_sales_LY.transactions - 1         AS transactions_vs_LY,
-       (CAST(ttl_sales_TY.sales_rrp AS FLOAT)/ttl_sales_TY.transactions)/(CAST(ttl_sales_LY.sales_rrp AS FLOAT)/ttl_sales_LY.transactions) -1 AS atv_vs_LY
+       CAST(ttl_sales_TY.sales_rrp AS FLOAT)/NULLIF(ttl_sales_TY.transactions,0)                AS atv,
+       CAST(ttl_sales_TY.traffic AS FLOAT)/NULLIF(ttl_sales_LY.traffic,0) - 1                   AS traffic_vs_LY,
+       CAST(ttl_sales_TY.sales_rrp AS FLOAT)/NULLIF(ttl_sales_LY.sales_rrp,0) - 1               AS sales_vs_LY,
+       CAST(ttl_sales_TY.transactions AS FLOAT)/NULLIF(ttl_sales_LY.transactions,0) - 1         AS transactions_vs_LY,
+       (CAST(ttl_sales_TY.sales_rrp AS FLOAT)/NULLIF(ttl_sales_TY.transactions,0))/(CAST(ttl_sales_LY.sales_rrp AS FLOAT)/NULLIF(ttl_sales_LY.transactions,0)) -1 AS atv_vs_LY
 FROM ttl_sales_TY
 LEFT JOIN ttl_sales_LY
        ON ttl_sales_TY.city_tier = ttl_sales_LY.city_tier

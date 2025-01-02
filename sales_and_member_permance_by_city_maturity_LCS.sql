@@ -270,3 +270,5 @@ SELECT
   FROM sales
   LEFT JOIN member_KPI
          ON member_KPI.city_maturity_type = sales.city_maturity_type;
+ 
+ 
